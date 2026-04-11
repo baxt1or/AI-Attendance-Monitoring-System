@@ -1,0 +1,1 @@
+# download_path: /Users/baxtiyorbekmurodov/.insightface/models/buffalo_l
