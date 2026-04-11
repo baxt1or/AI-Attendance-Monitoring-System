@@ -1,4 +1,4 @@
-# 🤖 AI Face Attendance System
+# 🤖 AI Attendance Monitoring System
 
 A real-time face recognition-based attendance system powered by AI and computer vision.
 
