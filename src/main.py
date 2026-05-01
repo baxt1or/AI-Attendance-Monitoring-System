@@ -50,7 +50,10 @@ def mark_attendance(name):
         print(f"[ATTENDANCE] {name} marked present!")
 
 
-cap = cv2.VideoCapture(0)
+stream_url = "http://192.168.76.129:81/stream"
+
+cap = cv2.VideoCapture(stream_url)
+
 
 while True:
     ret, frame = cap.read()
@@ -81,6 +84,17 @@ while True:
     # Press 'q' to quit
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+
+
+
+
+
+
+
+
+
+
 
 cap.release()
 cv2.destroyAllWindows()
