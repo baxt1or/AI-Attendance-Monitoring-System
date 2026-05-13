@@ -11,7 +11,7 @@ app = insightface.app.FaceAnalysis()
 app.prepare(ctx_id=-1) 
 
 
-DB_PATH = "../data/embeddings/embeddings.pkl"
+DB_PATH = "./data/embeddings/embeddings.pkl"
 
 
 if os.path.exists(DB_PATH):
