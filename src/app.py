@@ -6,19 +6,29 @@ import datetime
 import os
 import threading
 import time
-
+from pathlib import Path
 
 # ==========================================
 # CONFIG
 # ==========================================
 DB_PATH = "../data/embeddings/embeddings.pkl"
-ATTENDANCE_DIR = "attendance"
-os.makedirs(ATTENDANCE_DIR, exist_ok=True)
 
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent  
+ATTENDANCE_DIR = BASE_DIR / "monitor"
+ATTENDANCE_DIR.mkdir(exist_ok=True)
 today = datetime.date.today()
-CSV_PATH = os.path.join(ATTENDANCE_DIR, f"attendance_{today}.csv")
+CSV_PATH = ATTENDANCE_DIR / f"attendance_{today}.csv"
 
-STREAM_URL = "http://192.168.76.129:81/stream"
+
+
+
+
+
+url = '192.168.134.129'
+
+STREAM_URL = f"http://{url}:81/stream"
 THRESHOLD = 0.55
 
 latest_frame = None
@@ -73,13 +83,11 @@ def mark_attendance(name):
         print(f"[ATTENDANCE] {name}")
 
 
-# ==========================================
-# CAMERA READER THREAD
-# ==========================================
+
 def camera_reader():
     global latest_frame, running
 
-    cap = cv2.VideoCapture(STREAM_URL)
+    cap = cv2.VideoCapture(0)
 
     while running:
         ret, frame = cap.read()
@@ -90,7 +98,7 @@ def camera_reader():
             print("Reconnecting stream...")
             cap.release()
             time.sleep(1)
-            cap = cv2.VideoCapture(STREAM_URL)
+            cap = cv2.VideoCapture(0)
 
     cap.release()
 
@@ -98,9 +106,6 @@ def camera_reader():
 threading.Thread(target=camera_reader, daemon=True).start()
 
 
-# ==========================================
-# MAIN AI LOOP
-# ==========================================
 frame_count = 0
 
 while True:
@@ -132,8 +137,28 @@ while True:
 
             mark_attendance(name)
 
-    cv2.putText(frame, f"Present: {len(attendance)}", (10,30),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 2)
+
+    cv2.putText(frame,
+                f"Present Count: {len(attendance)}",
+                (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                (255, 0, 0),
+                2)
+
+    # display names
+    y_offset = 70
+
+    for person in attendance:
+        cv2.putText(frame,
+                    person,
+                    (10, y_offset),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7,
+                    (0, 255, 0),
+                    2)
+
+        y_offset += 30
 
     cv2.imshow("AI Attendance Monitor", frame)
 

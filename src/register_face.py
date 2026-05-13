@@ -3,13 +3,15 @@ import pickle
 import insightface
 import numpy as np
 import os
+import glob
+
 
 
 app = insightface.app.FaceAnalysis()
-app.prepare(ctx_id=-1)  # CPU (-1), GPU (0 if you have CUDA)
+app.prepare(ctx_id=-1) 
 
 
-DB_PATH = "../data/embeddings.pkl"
+DB_PATH = "../data/embeddings/embeddings.pkl"
 
 
 if os.path.exists(DB_PATH):
@@ -45,12 +47,22 @@ def register(name, image_path):
 
 
 
-# register("test3", "../data/test3.jpg")
+
+# SAVES FACE IMAGE DATA
+files = glob.glob("../data/students/*")
+
+ids = [os.path.splitext(os.path.basename(file))[0] for file in files]
 
 
+for student_id, file_path in zip(ids, files):
 
-# with open(DB_PATH, "wb") as f:
-#     pickle.dump(db, f)
+    print(f"Processing: {student_id}")
 
-# print("\n✅ Done. Stored embeddings:")
-# print(list(db.keys()))
+    register(student_id, file_path)
+
+
+with open(DB_PATH, "wb") as f:
+    pickle.dump(db, f)
+
+print("\n✅ Done. Stored embeddings:")
+print(list(db.keys()))
